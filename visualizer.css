@@ -1,0 +1,113 @@
+* { vertical-align: top; }
+
+.searchVisualizer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+.cardViewport,
+.cardCache,
+.bufferingCollator,
+.sourceBuffer { border: 1px solid black; }
+
+.cardColumn {
+  flex: 0 0 25vw;
+  margin: 50px 20px;
+}
+.bufferingCollator {
+  flex: 0 0 30vw;
+  margin: 50px 20px;
+}
+.rewindStream {
+  flex: 0 0 30vw;
+  margin: 50px 20px;
+}
+.cardViewport {
+  height: 50vh;
+  margin: 20px 0;
+  overflow: scroll;
+}
+.cardCache {
+  height: 20vh;
+  margin: 20px 0;
+}
+.bufferingCollator {
+  height: 30vh;
+}
+
+.sourceStream {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  margin: 50px 0;
+  height: 20vh;
+}
+
+.sourceBuffer {
+  width: 70%;
+  height: 100%;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+}
+.sourceLogo {
+  font-size: 50px;
+}
+.sourceLogo i {
+  vertical-align: baseline;
+  opacity: .2;
+}
+.sourceLogo i.loading {
+  opacity: 1;
+}
+i.fa-facebook-square {
+  color: #3C599F;
+}
+i.fa-twitter-square {
+  color: #5EA9DD;
+}
+i.fa-instagram {
+  color: #895A4D;
+}
+
+.card {
+  float: left;
+  border: 1px solid black;
+  height: 17px;
+  width: 17px;
+}
+.sourceBuffer .card,
+.cardViewport .card {
+  height: 10px;
+  width: 10px;
+}
+.card.twitter {
+  background-color: #5EA9DD;
+}
+.card.instagram {
+  background-color: #895A4D;
+}
+.card.facebook {
+  background-color: #3C599F;
+}
+
+.searchQuery {
+  position: absolute;
+  top: 15%;
+  left: 30vw;
+  height: 40px;
+  width: 30vw;
+  margin: 0 20px;
+  text-align: center;
+  font-family: Helvetica;
+  font-size: 1.7em;
+  font-weight: bold;
+}
