@@ -7,6 +7,8 @@
   flex-wrap: nowrap;
   justify-content: center;
   align-items: center;
+  max-width: 900px;
+  margin: auto;
 }
 .cardViewport,
 .cardCache,
@@ -14,15 +16,15 @@
 .sourceBuffer { border: 1px solid black; }
 
 .cardColumn {
-  flex: 0 0 25vw;
+  flex: 0 0 25%;
   margin: 50px 20px;
 }
 .bufferingCollator {
-  flex: 0 0 30vw;
+  flex: 0 0 30%;
   margin: 50px 20px;
 }
 .rewindStream {
-  flex: 0 0 30vw;
+  flex: 0 0 30%;
   margin: 50px 20px;
 }
 .cardViewport {
@@ -102,9 +104,10 @@ i.fa-instagram {
 .searchQuery {
   position: absolute;
   top: 15%;
-  left: 30vw;
+  left: 30%;
+  margin-left: -15%;
   height: 40px;
-  width: 30vw;
+  width: 30%;
   margin: 0 20px;
   text-align: center;
   font-family: Helvetica;

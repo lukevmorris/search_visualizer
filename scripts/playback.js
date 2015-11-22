@@ -3,7 +3,7 @@ var ActionHelpers = require("./action_helpers");
 
 var Playback = {
   initiate: function() {
-    http.get({ path: "/playback/fast_syria" }, function(response) {
+    http.get({ path: "/playback/fast_justin_bieber" }, function(response) {
       var result = "";
       response.on("data", function(buffer) { result += buffer; });
       response.on("end", function() { Playback.wholeSearch(result); });

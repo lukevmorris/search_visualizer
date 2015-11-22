@@ -7,6 +7,13 @@ ReactDOM.render(
   document.getElementById("content")
 );
 
+window.addEventListener("storage", function(event) {
+  console.log("Herro");
+  if (event.key === "searchVisualizerStorage") {
+    console.log("Something changed!");
+  }
+});
+
 Playback.initiate();
 
 setInterval(function() {
@@ -706,7 +713,7 @@ var ActionHelpers = require("./action_helpers");
 
 var Playback = {
   initiate: function() {
-    http.get({ path: "/playback/fast_syria" }, function(response) {
+    http.get({ path: "/playback/fast_justin_bieber" }, function(response) {
       var result = "";
       response.on("data", function(buffer) { result += buffer; });
       response.on("end", function() { Playback.wholeSearch(result); });
@@ -800,20 +807,27 @@ var assign = require("object-assign");
 var EventEmitter = require("events").EventEmitter;
 var AppDispatcher = require("../dispatcher");
 
-var _cards = {}
+var _cards = {};
+var _commands = [];
 
-function createCard(card) {
-  var entropy = parseInt(Math.random() * 1998 - 999);
-  _cards[card.id] = {
-    id: card.id,
-    location: "apiBuffer",
-    timestamp: card.timestamp + entropy,
-    source: card.source
-  };
+function asyncCommand(command) {
+  _commands.push(command);
 }
 
-function moveCard(id, location) {
-  _cards[id].location = location;
+var CardCommands = {
+  createCard: function(card) {
+    var entropy = parseInt(Math.random() * 1998 - 999);
+    _cards[card.id] = {
+      id: card.id,
+      location: "apiBuffer",
+      timestamp: card.timestamp + entropy,
+      source: card.source
+    };
+  },
+
+  moveCard: function(id, location) {
+    _cards[id].location = location;
+  }
 }
 
 function sortCards(cards) {
@@ -827,6 +841,17 @@ function sortCards(cards) {
     }
   });
 }
+
+setInterval(function() {
+  console.log(_commands);
+  var command = _commands.shift();
+  if(command !== undefined) {
+    var fnName = command[0];
+    var fnArgs = command.slice(1);
+    CardCommands[fnName].apply(this, fnArgs);
+    CardStore.emitChange();
+  }
+}, 5);
 
 var CardStore = assign({}, EventEmitter.prototype, {
   inApiBuffer: function(source) {
@@ -886,13 +911,11 @@ var CardStore = assign({}, EventEmitter.prototype, {
   dispatcherIndex: AppDispatcher.register(function(payload) {
     switch(payload.actionType) {
       case "createCard":
-        createCard(payload.card);
-        CardStore.emitChange();
+        asyncCommand(["createCard", payload.card])
         break;
 
       case "moveCard":
-        moveCard(payload.id, payload.location);
-        CardStore.emitChange();
+        asyncCommand(["moveCard", payload.id, payload.location]);
         break;
 
     }
