@@ -17,12 +17,12 @@ var ActionHelpers = {
   },
 
   createCard: function(url, timestamp, source) {
-    var card = { id: url, timestamp: +timestamp, source: source };
+    var card = { url: url, timestamp: +timestamp, source: source };
     AppDispatcher.dispatch({ actionType: "createCard", card: card});
   },
 
   moveCard: function(url, location) {
-    AppDispatcher.dispatch({ actionType: "moveCard", id: url, location: location });
+    AppDispatcher.dispatch({ actionType: "moveCard", url: url, location: location });
   }
 }
 

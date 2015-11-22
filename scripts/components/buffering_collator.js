@@ -26,7 +26,7 @@ var BufferingCollator = React.createClass({
     var cardComponents = [];
     for(var i=0; i<this.state.cards.length; i++) {
       var card = this.state.cards[i];
-      var newCard = React.createElement(Card, {key: card.id, card: card});
+      var newCard = React.createElement(Card, {key: card.url, card: card});
       cardComponents.push(newCard);
     }
     return (

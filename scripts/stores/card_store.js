@@ -4,6 +4,7 @@ var AppDispatcher = require("../dispatcher");
 
 var _cards = {};
 var _commands = [];
+var _index = 0;
 
 function asyncCommand(command) {
   _commands.push(command);
@@ -11,25 +12,29 @@ function asyncCommand(command) {
 
 var CardCommands = {
   createCard: function(card) {
-    var entropy = parseInt(Math.random() * 1998 - 999);
-    _cards[card.id] = {
-      id: card.id,
+    _cards[card.url] = {
+      url: card.url,
       location: "apiBuffer",
-      timestamp: card.timestamp + entropy,
-      source: card.source
+      timestamp: card.timestamp,
+      source: card.source,
+      index: 0
     };
   },
 
-  moveCard: function(id, location) {
-    _cards[id].location = location;
+  moveCard: function(url, location) {
+    _cards[url].location = location;
+    if (location === "bufferingCollator") {
+      _cards[url].index = _index;
+      _index++;
+    }
   }
 }
 
 function sortCards(cards) {
   cards.sort(function(cardA, cardB) {
-    if (cardB.timestamp < cardA.timestamp) {
+    if (cardA.index < cardB.index) {
       return -1;
-    } else if (cardA.timestamp === cardB.timestamp) {
+    } else if (cardA.index === cardB.index) {
       return 0;
     } else {
       return 1;
@@ -38,7 +43,6 @@ function sortCards(cards) {
 }
 
 setInterval(function() {
-  console.log(_commands);
   var command = _commands.shift();
   if(command !== undefined) {
     var fnName = command[0];
@@ -110,7 +114,7 @@ var CardStore = assign({}, EventEmitter.prototype, {
         break;
 
       case "moveCard":
-        asyncCommand(["moveCard", payload.id, payload.location]);
+        asyncCommand(["moveCard", payload.url, payload.location]);
         break;
 
     }

@@ -380,12 +380,12 @@ var ActionHelpers = {
   },
 
   createCard: function(url, timestamp, source) {
-    var card = { id: url, timestamp: +timestamp, source: source };
+    var card = { url: url, timestamp: +timestamp, source: source };
     AppDispatcher.dispatch({ actionType: "createCard", card: card});
   },
 
   moveCard: function(url, location) {
-    AppDispatcher.dispatch({ actionType: "moveCard", id: url, location: location });
+    AppDispatcher.dispatch({ actionType: "moveCard", url: url, location: location });
   }
 }
 
@@ -420,7 +420,7 @@ var BufferingCollator = React.createClass({
     var cardComponents = [];
     for(var i=0; i<this.state.cards.length; i++) {
       var card = this.state.cards[i];
-      var newCard = React.createElement(Card, {key: card.id, card: card});
+      var newCard = React.createElement(Card, {key: card.url, card: card});
       cardComponents.push(newCard);
     }
     return (
@@ -462,8 +462,7 @@ var CardColumn = React.createClass({
   render: function() {
     return (
       React.createElement("div", {className: "cardColumn"},
-        React.createElement(CardViewport),
-        React.createElement(CardCache)
+        React.createElement(CardViewport)
       )
     );
   }
@@ -500,7 +499,7 @@ var CardViewport = React.createClass({
     var cardComponents = [];
     for (i=0; i<this.state.cards.length; i++) {
       var card = this.state.cards[i];
-      var newCard = React.createElement(Card, {key: card.id, card: card});
+      var newCard = React.createElement(Card, {key: card.url, card: card});
       cardComponents.push(newCard);
     }
     return (
@@ -625,7 +624,7 @@ var SourceBuffer = React.createClass({
     var cardComponents = []
     for(var i=0; i<this.state.cards.length; i++) {
       var card = this.state.cards[i];
-      var newCard = React.createElement(Card, {key: card.id, card: card});
+      var newCard = React.createElement(Card, {key: card.url, card: card});
       cardComponents.push(newCard);
     }
     return (
@@ -809,6 +808,7 @@ var AppDispatcher = require("../dispatcher");
 
 var _cards = {};
 var _commands = [];
+var _index = 0;
 
 function asyncCommand(command) {
   _commands.push(command);
@@ -816,25 +816,29 @@ function asyncCommand(command) {
 
 var CardCommands = {
   createCard: function(card) {
-    var entropy = parseInt(Math.random() * 1998 - 999);
-    _cards[card.id] = {
-      id: card.id,
+    _cards[card.url] = {
+      url: card.url,
       location: "apiBuffer",
-      timestamp: card.timestamp + entropy,
-      source: card.source
+      timestamp: card.timestamp,
+      source: card.source,
+      index: 0
     };
   },
 
-  moveCard: function(id, location) {
-    _cards[id].location = location;
+  moveCard: function(url, location) {
+    _cards[url].location = location;
+    if (location === "bufferingCollator") {
+      _cards[url].index = _index;
+      _index++;
+    }
   }
 }
 
 function sortCards(cards) {
   cards.sort(function(cardA, cardB) {
-    if (cardB.timestamp < cardA.timestamp) {
+    if (cardA.index < cardB.index) {
       return -1;
-    } else if (cardA.timestamp === cardB.timestamp) {
+    } else if (cardA.index === cardB.index) {
       return 0;
     } else {
       return 1;
@@ -843,7 +847,6 @@ function sortCards(cards) {
 }
 
 setInterval(function() {
-  console.log(_commands);
   var command = _commands.shift();
   if(command !== undefined) {
     var fnName = command[0];
@@ -915,7 +918,7 @@ var CardStore = assign({}, EventEmitter.prototype, {
         break;
 
       case "moveCard":
-        asyncCommand(["moveCard", payload.id, payload.location]);
+        asyncCommand(["moveCard", payload.url, payload.location]);
         break;
 
     }

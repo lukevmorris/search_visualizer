@@ -5,8 +5,7 @@ var CardColumn = React.createClass({
   render: function() {
     return (
       React.createElement("div", {className: "cardColumn"},
-        React.createElement(CardViewport),
-        React.createElement(CardCache)
+        React.createElement(CardViewport)
       )
     );
   }
