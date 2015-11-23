@@ -6,6 +6,13 @@ ReactDOM.render(
   document.getElementById("content")
 );
 
+window.addEventListener("storage", function(event) {
+  console.log("Herro");
+  if (event.key === "searchVisualizerStorage") {
+    console.log("Something changed!");
+  }
+});
+
 Playback.initiate();
 
 setInterval(function() {
